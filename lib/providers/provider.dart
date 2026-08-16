@@ -4,13 +4,21 @@ import 'package:test_riverpod/entities/product.dart';
 // -----------------------------------------------------------------------------
 // 1. Users Provider (Read-only)
 // -----------------------------------------------------------------------------
-final usersProvider = Provider<List<User>>((ref) {
-  return [
-    User(email: "user123@gmail.com", password: "pass1234", name: "Usuario1"),
-    User(email: "Usuario@gmail.com", password: "adm123", name: "Usuario2"),
-  ];
-});
+class UsersNotifier extends Notifier<List<User>> {
+  @override
+  List<User> build() {
+    return [
+      User(email: "user123@gmail.com", password: "pass1234", name: "Usuario1"),
+      User(email: "Usuario@gmail.com", password: "adm123", name: "Usuario2"),
+    ];
+  }
 
+  void addUser(User user) {
+    state = [...state, user];
+  }
+}
+
+final usersProvider = NotifierProvider<UsersNotifier, List<User>>(UsersNotifier.new);
 // -----------------------------------------------------------------------------
 // 2. Products Provider (Stateful list using Riverpod Notifier)
 // -----------------------------------------------------------------------------

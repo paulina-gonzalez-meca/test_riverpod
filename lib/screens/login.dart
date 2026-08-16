@@ -89,6 +89,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               },
               child: const Text('Enter'),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => context.push('/register'),
+              child: const Text('Registrar Usuario'),
+            ),
           ],
         ),
       ),
