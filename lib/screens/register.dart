@@ -34,14 +34,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error: hay casillas vacías.")),
+        const SnackBar(content: Text("Por favor, completa todos los campos")),
       );
       return;
     }
 
     if (!email.contains("@")) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Correo electrónico incorrecto")),
+        const SnackBar(content: Text("El correo electrónico no es válido")),
       );
       return;
     }
@@ -53,7 +53,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       return;
     }
 
-    // Agregar usuario al estado de Riverpod
+    // Consulta la lista actual de usuarios en Riverpod
+    final existingUsers = ref.read(usersProvider);
+    final emailExists = existingUsers.any(
+      (user) => user.email.toLowerCase() == email.toLowerCase(),
+    );
+
+    if (emailExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Este correo electrónico ya se encuentra registrado")),
+      );
+      return;
+    }
+
+    // Registrar nuevo usuario en el estado global
     final newUser = User(name: name, email: email, password: password);
     ref.read(usersProvider.notifier).addUser(newUser);
 
@@ -61,7 +74,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       const SnackBar(content: Text("Usuario registrado con éxito")),
     );
 
-    context.pop(); // Regresa a la pantalla de Login
+    context.pop();
   }
 
   @override
