@@ -27,32 +27,42 @@ class ProductsNotifier extends Notifier<List<Product>> {
   List<Product> build() {
     return [
       Product(
+        id: "1",
         name: "Fideos instantáneos",
         description: "Fideos instantáneos sabor a carne.",
+        type: "Comida",
         price: 4000,
         url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4kigyrL6zmBI52fvq8Fv2E3vDN7nXllrV0A&s",
       ),
       Product(
+        id: "2",
         name: "Bolsa de papas fritas",
         description: "Marca Lays, sabor común.",
+        type: "Comida",
         price: 3500,
         url: "https://dcdn-us.mitiendanube.com/stores/001/151/835/products/77903109836381-00914fc6f15dd2786216110235723239-1024-1024.webp",
       ),
       Product(
+        id: "3",
         name: "Bolsa Doritos",
         description: "Snacks sabor a queso.",
+        type: "Comida",
         price: 3200,
         url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7d8DDd1Dmuz383semFlFpD-OEsIlFYieI6A&s",
       ),
       Product(
+        id: "4",
         name: "Bolsa Cheetos",
         description: "Snacks chizito sabor a queso.",
+        type: "Comida",
         price: 2800,
         url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6eAmH1IJFVM-4mT-vV_i5K3LdnlU5FzI5Vg&s",
       ),
       Product(
+        id: "5",
         name: "Botella Coca Cola",
         description: "Gaseosa con azúcar. 2,25 litros.",
+        type: "Comida",
         price: 3100,
         url: "https://acdn-us.mitiendanube.com/stores/001/144/141/products/whatsapp-image-2021-06-11-at-19-36-03-11-88c69a6ccaa75978a716234511927730-1024-1024.webp",
       ),

@@ -17,15 +17,17 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
+  late final TextEditingController _typeController;
   late final TextEditingController _priceController;
   late final TextEditingController _urlController;
 
   @override
   void initState() {
     super.initState();
-    // Pre-fill controllers if editing an existing product
+    // Cargar datos del producto si se va a editar
     _nameController = TextEditingController(text: widget.product?.name ?? '');
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
+    _typeController = TextEditingController(text: widget.product?.type ?? '');
     _priceController = TextEditingController(
       text: widget.product != null ? widget.product!.price.toString() : '',
     );
@@ -36,6 +38,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _typeController.dispose();
     _priceController.dispose();
     _urlController.dispose();
     super.dispose();
@@ -43,26 +46,31 @@ class _EditScreenState extends ConsumerState<EditScreen> {
 
   void _saveProduct() {
     if (_formKey.currentState!.validate()) {
+      // Si existe se conserva la ID actual, de lo contrario se genera una basada en marcas de tiempo
+      final String id = widget.product?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+
       final updatedProduct = Product(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        price: double.parse(_priceController.text),
-        url: _urlController.text.isEmpty
+        id: id,
+        name: _nameController.text.trim(),
+        description: _descriptionController.text.trim(),
+        type: _typeController.text.trim(),
+        price: double.parse(_priceController.text.trim()),
+        url: _urlController.text.trim().isEmpty
             ? 'https://via.placeholder.com/150'
-            : _urlController.text,
+            : _urlController.text.trim(),
       );
 
       if (widget.product != null) {
-        // Edit existing product
+        // Editar producto existente
         ref
             .read(productsProvider.notifier)
             .updateProduct(widget.product!, updatedProduct);
       } else {
-        // Create new product
+        // Crear nuevo producto
         ref.read(productsProvider.notifier).addProduct(updatedProduct);
       }
 
-      // Return to previous screen
+      // Regresar a la pantalla anterior
       context.pop();
     }
   }
@@ -87,6 +95,12 @@ class _EditScreenState extends ConsumerState<EditScreen> {
                   decoration: const InputDecoration(labelText: 'Nombre del producto'),
                   validator: (value) =>
                       value == null || value.isEmpty ? 'Por favor ingrese un nombre' : null,
+                ),
+                TextFormField(
+                  controller: _typeController,
+                  decoration: const InputDecoration(labelText: 'Tipo / Categoría'),
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Por favor ingrese un tipo/categoría' : null,
                 ),
                 TextFormField(
                   controller: _descriptionController,

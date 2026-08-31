@@ -15,12 +15,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -28,22 +30,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Por favor, completa todos los campos")),
+        const SnackBar(content: Text("Error: hay casillas vacías.")),
       );
       return;
     }
 
     if (!email.contains("@")) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("El correo electrónico no es válido")),
+        const SnackBar(content: Text("Correo electrónico incorrecto")),
       );
       return;
     }
 
-    // Add user to Riverpod state
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Las contraseñas no coinciden")),
+      );
+      return;
+    }
+
+    // Agregar usuario al estado de Riverpod
     final newUser = User(name: name, email: email, password: password);
     ref.read(usersProvider.notifier).addUser(newUser);
 
@@ -51,7 +61,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       const SnackBar(content: Text("Usuario registrado con éxito")),
     );
 
-    context.pop(); // Returns back to Login screen
+    context.pop(); // Regresa a la pantalla de Login
   }
 
   @override
@@ -77,6 +87,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             TextField(
               controller: passwordController,
               decoration: const InputDecoration(hintText: "Contraseña"),
+              obscureText: true,
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: confirmPasswordController,
+              decoration: const InputDecoration(hintText: "Confirmar contraseña"),
               obscureText: true,
             ),
             const SizedBox(height: 20),

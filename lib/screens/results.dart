@@ -8,12 +8,27 @@ class ResultsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch state updates from Riverpod
+    // Escucha las actualizaciones del estado desde Riverpod
     final productList = ref.watch(productsProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Resultados'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+            onPressed: () {
+              // Si fue abierto con push va a la pantalla anterior,
+              // o bien redirige directamente al Login con context.go('/login')
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/login');
+              }
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,10 +52,11 @@ class ResultsScreen extends ConsumerWidget {
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.broken_image),
                     ),
                     title: Text(product.name),
-                    subtitle: const Text("Toca para ver más información."),
+                    subtitle: Text("Categoría: ${product.type}\nToca para ver más información."),
                     onTap: () {
                       context.push('/details', extra: product);
                     },
@@ -56,7 +72,7 @@ class ResultsScreen extends ConsumerWidget {
           context.push('/edit');
         },
         icon: const Icon(Icons.add),
-        label: const Text('Editar lista'),
+        label: const Text('Agregar producto'),
       ),
     );
   }
