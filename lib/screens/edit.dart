@@ -24,7 +24,6 @@ class _EditScreenState extends ConsumerState<EditScreen> {
   @override
   void initState() {
     super.initState();
-    // Cargar datos del producto si se va a editar
     _nameController = TextEditingController(text: widget.product?.name ?? '');
     _descriptionController = TextEditingController(text: widget.product?.description ?? '');
     _typeController = TextEditingController(text: widget.product?.type ?? '');
@@ -46,7 +45,7 @@ class _EditScreenState extends ConsumerState<EditScreen> {
 
   void _saveProduct() {
     if (_formKey.currentState!.validate()) {
-      // Si existe se conserva la ID actual, de lo contrario se genera una basada en marcas de tiempo
+      // Preserva el mismo id para que el estado global reconozca la actualización
       final String id = widget.product?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
       final updatedProduct = Product(
@@ -61,16 +60,14 @@ class _EditScreenState extends ConsumerState<EditScreen> {
       );
 
       if (widget.product != null) {
-        // Editar producto existente
+        // Actualiza la lista en Riverpod, provocando el redibujado reactivo
         ref
             .read(productsProvider.notifier)
             .updateProduct(widget.product!, updatedProduct);
       } else {
-        // Crear nuevo producto
         ref.read(productsProvider.notifier).addProduct(updatedProduct);
       }
 
-      // Regresar a la pantalla anterior
       context.pop();
     }
   }

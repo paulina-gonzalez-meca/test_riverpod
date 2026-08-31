@@ -11,8 +11,17 @@ class DetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Escucha la lista reactiva de productos de Riverpod
+    final products = ref.watch(productsProvider);
+
+    // Obtiene la versión más reciente del producto desde el estado global mediante su id
+    final currentProduct = products.firstWhere(
+      (p) => p.id == product.id,
+      orElse: () => product,
+    );
+
     return Scaffold(
-      appBar: AppBar(title: Text(product.name)),
+      appBar: AppBar(title: Text(currentProduct.name)),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -24,7 +33,7 @@ class DetailsScreen extends ConsumerWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16.0),
                 child: Image.network(
-                  product.url,
+                  currentProduct.url,
                   width: 300,
                   height: 300,
                   fit: BoxFit.cover,
@@ -34,16 +43,16 @@ class DetailsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Nombre: ${product.name}',
+                'Nombre: ${currentProduct.name}',
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              Text('Tipo / Categoría: ${product.type}',
+              Text('Tipo / Categoría: ${currentProduct.type}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-              Text('Descripción: ${product.description}',
+              Text('Descripción: ${currentProduct.description}',
                   style: const TextStyle(fontSize: 16)),
-              Text('Precio: \$${product.price}',
+              Text('Precio: \$${currentProduct.price}',
                   style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 24),
               Row(
@@ -51,7 +60,8 @@ class DetailsScreen extends ConsumerWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
-                      context.push('/edit', extra: product);
+                      // Se envía la versión más reciente del producto a la pantalla de edición
+                      context.push('/edit', extra: currentProduct);
                     },
                     icon: const Icon(Icons.edit),
                     label: const Text('Editar'),
@@ -63,7 +73,7 @@ class DetailsScreen extends ConsumerWidget {
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () {
-                      ref.read(productsProvider.notifier).deleteProduct(product);
+                      ref.read(productsProvider.notifier).deleteProduct(currentProduct);
                       context.pop();
                     },
                     icon: const Icon(Icons.delete),
